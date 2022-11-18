@@ -2,8 +2,8 @@
 
 
 ## Table of contents
-1. [How to run](#how-to-run)
-2. [Unit tests](#unit-tests)
+1. [How to run](#1-how-to-run)
+2. [Unit tests](#2-unit-tests)
 
 
 ## 1. How to run
