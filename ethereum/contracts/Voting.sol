@@ -31,12 +31,12 @@ contract VotingFactory {
         delete employees[_address];
     }
 
-    function isEmployee(address _employee) public view returns (bool) {
-        return employees[_employee];
+    function isEmployee(address _address) public view returns (bool) {
+        return employees[_address];
     }
 
-    function isStudent(address _student) public view returns (bool) {
-        return students[_student];
+    function isStudent(address _address) public view returns (bool) {
+        return students[_address];
     }
 
     function getDeployedVotings() public view returns (address[] memory) {
