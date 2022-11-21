@@ -15,6 +15,22 @@ contract VotingFactory {
         deployedVotings.push(newVoting);
     }
 
+    function addStudent(address _address) public {
+        students[_address] = true;
+    }
+
+    function addEmployee(address _address) public {
+        employees[_address] = true;
+    }
+
+    function removeStudent(address _address) public {
+        delete students[_address];
+    }
+
+    function removeEmployee(address _address) public {
+        delete employees[_address];
+    }
+
     function isEmployee(address _employee) public view returns (bool) {
         return employees[_employee];
     }
