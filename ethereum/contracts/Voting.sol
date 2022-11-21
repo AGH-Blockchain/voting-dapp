@@ -15,6 +15,14 @@ contract VotingFactory {
         deployedVotings.push(newVoting);
     }
 
+    function isEmployee(address _employee) public view returns (bool) {
+        return employees[_employee];
+    }
+
+    function isStudent(address _student) public view returns (bool) {
+        return students[_student];
+    }
+
     function getDeployedVotings() public view returns (address[] memory) {
         return deployedVotings;
     }
