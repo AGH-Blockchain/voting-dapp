@@ -7,9 +7,11 @@ import java.util.Date;
 
 @Data
 @Builder
-public class MailDTO {
+public class PendingVerificationDTO {
 
-    private String mail;
+    private String email;
 
-    private Date creationDate;
+    private String token;
+
+    private Date tokenSentDate;
 }
