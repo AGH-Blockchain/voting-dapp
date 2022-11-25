@@ -65,6 +65,7 @@ public class RegistrationService {
                 throw new InvalidVerificationToken("Token is not correct. Check your mail once again or wait about 20 minutes and generate new token");
             }
             saveUser(registerInformationDTO.getEmail());
+            removeFromPending(registerInformationDTO.getEmail());
             deploymentService.deployContract(registerInformationDTO.getBlockchainAddress());
         } else {
             throw new VerificationTimeException("It's been 15 minutes since the email was sent. Please generate the verification email again");
@@ -87,6 +88,11 @@ public class RegistrationService {
         user.setEmail(email);
         user.setCreationDate(new Date());
         emailRepository.save(user);
+    }
+
+    private void removeFromPending(String email) {
+        PendingVerification pendingVerification = pendingRepository.findByEmail(email).get(0);
+        pendingRepository.delete(pendingVerification);
     }
 
     private Optional<PendingVerificationDTO> registrationPending(String email) {
