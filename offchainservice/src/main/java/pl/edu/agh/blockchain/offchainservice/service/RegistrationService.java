@@ -13,7 +13,7 @@ import pl.edu.agh.blockchain.offchainservice.utils.CodeGenerator;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +76,7 @@ public class RegistrationService {
         PendingVerificationDTO pendingVerificationDTO = PendingVerificationDTO.builder()
                 .email(email)
                 .token(token)
-                .tokenSentDate(new Date())
+                .tokenSentDate(LocalDateTime.now())
                 .build();
         PendingVerification pendingVerification = modelMapper.map(pendingVerificationDTO,
                 PendingVerification.class);
@@ -86,7 +86,7 @@ public class RegistrationService {
     private void saveUser(String email) {
         User user = new User();
         user.setEmail(email);
-        user.setCreationDate(new Date());
+        user.setCreationDate(LocalDateTime.now());
         emailRepository.save(user);
     }
 

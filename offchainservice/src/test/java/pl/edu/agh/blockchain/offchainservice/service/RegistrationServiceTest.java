@@ -14,8 +14,8 @@ import pl.edu.agh.blockchain.offchainservice.model.User;
 import pl.edu.agh.blockchain.offchainservice.repository.EmailRepository;
 import pl.edu.agh.blockchain.offchainservice.repository.PendingRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -74,7 +74,7 @@ class RegistrationServiceTest {
         PendingVerification pendingVerification = new PendingVerification();
         pendingVerification.setEmail("test@agh.edu.pl");
         pendingVerification.setToken("test");
-        pendingVerification.setTokenSentDate(new Date());
+        pendingVerification.setTokenSentDate(LocalDateTime.now());
 
         when(pendingRepository.findByEmail("test@agh.edu.pl")).thenReturn(Collections.singletonList(pendingVerification));
         RegisterInformationDTO registerInformationDTO = RegisterInformationDTO.builder()

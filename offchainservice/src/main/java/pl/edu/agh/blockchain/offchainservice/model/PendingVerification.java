@@ -3,7 +3,7 @@ package pl.edu.agh.blockchain.offchainservice.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity(name = "pending")
 public class PendingVerification {
@@ -16,7 +16,7 @@ public class PendingVerification {
     private String token;
 
     @Column(name = "token_sent_date")
-    private Date tokenSentDate;
+    private LocalDateTime tokenSentDate;
 
     public String getEmail() {
         return email;
@@ -26,7 +26,7 @@ public class PendingVerification {
         return token;
     }
 
-    public Date getTokenSentDate() {
+    public LocalDateTime getTokenSentDate() {
         return tokenSentDate;
     }
 
@@ -38,7 +38,7 @@ public class PendingVerification {
         this.token = code;
     }
 
-    public void setTokenSentDate(Date codeSentDate) {
+    public void setTokenSentDate(LocalDateTime codeSentDate) {
         this.tokenSentDate = codeSentDate;
     }
 }
