@@ -7,7 +7,7 @@ import pl.edu.agh.blockchain.offchainservice.dto.RegisterInformationDTO;
 import pl.edu.agh.blockchain.offchainservice.exceptions.*;
 import pl.edu.agh.blockchain.offchainservice.model.PendingVerification;
 import pl.edu.agh.blockchain.offchainservice.model.User;
-import pl.edu.agh.blockchain.offchainservice.repository.EmailRepository;
+import pl.edu.agh.blockchain.offchainservice.repository.UserRepository;
 import pl.edu.agh.blockchain.offchainservice.repository.PendingRepository;
 import pl.edu.agh.blockchain.offchainservice.utils.CodeGenerator;
 
@@ -20,29 +20,29 @@ import java.util.Optional;
 @Service
 public class RegistrationService {
 
-    private final EmailRepository emailRepository;
+    private final UserRepository userRepository;
 
     private final PendingRepository pendingRepository;
 
     private final EMailService eMailService;
 
-    private final DeploymentService deploymentService;
+    private final VotingFactoryService votingFactoryService;
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public RegistrationService(EmailRepository emailRepository, EMailService eMailService,
-                               PendingRepository pendingRepository, DeploymentService deploymentService) {
-        this.emailRepository = emailRepository;
+    public RegistrationService(UserRepository userRepository, EMailService eMailService,
+                               PendingRepository pendingRepository, VotingFactoryService votingFactoryService) {
+        this.userRepository = userRepository;
         this.eMailService = eMailService;
         this.pendingRepository = pendingRepository;
-        this.deploymentService = deploymentService;
+        this.votingFactoryService = votingFactoryService;
     }
 
     public void verifyUser(String email) {
         if (!email.endsWith("@agh.edu.pl") && !email.endsWith("@student.agh.edu.pl")) {
             throw new InvalidEmailDomainException(email + " is not AGH email");
         }
-        if (!emailRepository.existsByEmail(email)) {
+        if (!userRepository.existsByEmail(email)) {
             try {
                 String token = CodeGenerator.generateNewToken();
                 eMailService.sendEmail(email, token);
@@ -51,7 +51,7 @@ public class RegistrationService {
                 throw new SendFailedException(e.getMessage());
             }
         } else {
-            User user = emailRepository.findByEmail(email).get(0);
+            User user = userRepository.findByEmail(email).get(0);
             throw new UserAlreadyExistsException(MessageFormat.format("User with mail: {0} was registered: {1}", user.getEmail(),
                     user.getCreationDate()));
         }
@@ -66,9 +66,9 @@ public class RegistrationService {
             }
             saveUser(registerInformationDTO.getEmail());
             removeFromPending(registerInformationDTO.getEmail());
-            deploymentService.deployContract(registerInformationDTO.getBlockchainAddress());
+            votingFactoryService.addAddress(registerInformationDTO.getEmail(), registerInformationDTO.getBlockchainAddress());
         } else {
-            throw new VerificationTimeException("It's been 15 minutes since the email was sent. Please generate the verification email again");
+            throw new VerificationTimeException("You have not verified or your token expired");
         }
     }
 
@@ -87,7 +87,7 @@ public class RegistrationService {
         User user = new User();
         user.setEmail(email);
         user.setCreationDate(LocalDateTime.now());
-        emailRepository.save(user);
+        userRepository.save(user);
     }
 
     private void removeFromPending(String email) {

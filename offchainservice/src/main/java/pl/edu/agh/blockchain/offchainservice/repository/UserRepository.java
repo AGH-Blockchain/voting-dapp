@@ -7,7 +7,7 @@ import pl.edu.agh.blockchain.offchainservice.model.User;
 import java.util.List;
 
 @Repository
-public interface EmailRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, String> {
 
     List<User> findByEmail(String mail);
 

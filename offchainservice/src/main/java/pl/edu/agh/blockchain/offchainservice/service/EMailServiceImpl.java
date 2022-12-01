@@ -11,7 +11,7 @@ public class EMailServiceImpl implements EMailService {
     @Override
     public void sendEmail(String email, String token) throws IOException {
         Email from = new Email("blockchain@agh.edu.pl");
-        String subject = "Sending with SendGrid is Fun";
+        String subject = "Voting Dapp verification token from AGH Blockchain";
         Email to = new Email(email);
         Content content = new Content("text/plain", token);
         Mail mail = new Mail(from, subject, to, content);

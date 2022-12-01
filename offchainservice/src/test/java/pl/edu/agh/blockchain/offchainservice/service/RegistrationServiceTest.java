@@ -11,7 +11,7 @@ import pl.edu.agh.blockchain.offchainservice.exceptions.UserAlreadyExistsExcepti
 import pl.edu.agh.blockchain.offchainservice.exceptions.VerificationTimeException;
 import pl.edu.agh.blockchain.offchainservice.model.PendingVerification;
 import pl.edu.agh.blockchain.offchainservice.model.User;
-import pl.edu.agh.blockchain.offchainservice.repository.EmailRepository;
+import pl.edu.agh.blockchain.offchainservice.repository.UserRepository;
 import pl.edu.agh.blockchain.offchainservice.repository.PendingRepository;
 
 import java.time.LocalDateTime;
@@ -27,14 +27,9 @@ class RegistrationServiceTest {
     @InjectMocks
     RegistrationService registrationService;
 
-    @Mock
-    EMailService eMailService;
 
     @Mock
-    DeploymentService deploymentService;
-
-    @Mock
-    EmailRepository emailRepository;
+    UserRepository userRepository;
 
     @Mock
     PendingRepository pendingRepository;
@@ -51,8 +46,8 @@ class RegistrationServiceTest {
 
     @Test
     void verifyUser_EmailExists_ThrowException() {
-        when(emailRepository.existsByEmail("test@agh.edu.pl")).thenReturn(true);
-        when(emailRepository.findByEmail("test@agh.edu.pl")).thenReturn(Collections.singletonList(new User()));
+        when(userRepository.existsByEmail("test@agh.edu.pl")).thenReturn(true);
+        when(userRepository.findByEmail("test@agh.edu.pl")).thenReturn(Collections.singletonList(new User()));
 
         assertThrows(UserAlreadyExistsException.class, () -> registrationService.verifyUser("test@agh.edu.pl"));
     }
