@@ -13,6 +13,14 @@ contract VotingFactory {
         owner = _owner;
     }
 
+    modifier onlyBy(address _account) {
+        require(
+            msg.sender == _account,
+            "Sender not authorized."
+        );
+        _;
+    }
+
     function createVoting(string memory topic, string[] memory options) public {
         require(keccak256(abi.encodePacked(topic)) != keccak256(abi.encodePacked("")), "Topic must be provided"); // check if topic is not empty
         require(options.length > 1, "At least two options must be provided"); // check if there are at least two options
@@ -20,19 +28,19 @@ contract VotingFactory {
         deployedVotings.push(newVoting);
     }
 
-    function addStudent(address _address) public {
+    function addStudent(address _address) public onlyBy(owner) {
         students[_address] = true;
     }
 
-    function addEmployee(address _address) public {
+    function addEmployee(address _address) public onlyBy(owner) {
         employees[_address] = true;
     }
 
-    function removeStudent(address _address) public {
+    function removeStudent(address _address) public onlyBy(owner) {
         delete students[_address];
     }
 
-    function removeEmployee(address _address) public {
+    function removeEmployee(address _address) public onlyBy(owner) {
         delete employees[_address];
     }
 
