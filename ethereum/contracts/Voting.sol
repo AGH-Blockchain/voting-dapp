@@ -3,10 +3,15 @@
 pragma solidity ^0.8.9;
 
 contract VotingFactory {
+    address public owner;
     address[] public deployedVotings;
 
     mapping(address => bool) public students;
     mapping(address => bool) public employees;
+
+    constructor (address _owner) {
+        owner = _owner;
+    }
 
     function createVoting(string memory topic, string[] memory options) public {
         require(keccak256(abi.encodePacked(topic)) != keccak256(abi.encodePacked("")), "Topic must be provided"); // check if topic is not empty
