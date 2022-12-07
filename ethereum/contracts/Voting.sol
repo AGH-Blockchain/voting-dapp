@@ -33,7 +33,7 @@ contract VotingFactory {
         require(options.length <= 10, "No more than 10 options can be provided"); // check if max options is exceeded
         require(audience >= Audience.students && audience <= Audience.all, "Provided audience does not exist"); // check if provided audience is valid
 
-        address newVoting = address(new Voting(msg.sender, topic, options, audience));
+        address newVoting = address(new Voting(address(this), msg.sender, topic, options, audience));
         deployedVotings.push(newVoting);
     }
 
@@ -68,6 +68,8 @@ contract VotingFactory {
 
 contract Voting {
     address public creator;
+    address private factoryAddress;
+    VotingFactory private factory;
     string public topic;
     string[] public options;
     mapping(string => uint) public optionsVotes;
@@ -81,8 +83,10 @@ contract Voting {
         _;
     }
 
-    constructor (address _creator, string memory _topic, string[] memory _options, Audience _audience) {
+    constructor (address _factoryAddress, address _creator, string memory _topic, string[] memory _options, Audience _audience) {
         creator = _creator;
+        factoryAddress = _factoryAddress;
+        factory = VotingFactory(factoryAddress);
         topic = _topic;
         options = _options;
         audience = _audience;
