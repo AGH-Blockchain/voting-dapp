@@ -85,11 +85,11 @@ contract Voting {
 
     modifier onlyByAudience() {
         if (audience == Audience.all) {
-            require(factory.isStudent(msg.sender) || factory.isEmployee(msg.sender));
+            require(factory.isStudent(msg.sender) || factory.isEmployee(msg.sender), "Only students and employees can call this function");
         } else if (audience == Audience.students) {
-            require(factory.isStudent(msg.sender));
+            require(factory.isStudent(msg.sender), "Only students can call this function");
         } else if (audience == Audience.employees) {
-            require(factory.isEmployee(msg.sender));
+            require(factory.isEmployee(msg.sender), "Only employees can call this function");
         }
         _;
     }
@@ -103,7 +103,7 @@ contract Voting {
         audience = _audience;
     }
 
-    function vote(string memory option) public {
+    function vote(string memory option) public onlyByAudience() {
         require(!voters[msg.sender], "You have already voted");
         require(!closed, "Voting is closed");
         bool optionExists = false;
@@ -136,7 +136,7 @@ contract Voting {
         );
     }
 
-    function getOptions() public view returns (string[] memory) {
+    function getOptions() public onlyByAudience() view returns (string[] memory) {
         return options;
     }
 
@@ -148,7 +148,7 @@ contract Voting {
         return votersCount;
     }
 
-    function getOptionsCount() public view returns (uint) {
+    function getOptionsCount() public onlyByAudience() view returns (uint) {
         return options.length;
     }
 
