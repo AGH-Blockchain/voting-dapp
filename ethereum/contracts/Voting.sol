@@ -2,6 +2,12 @@
 
 pragma solidity ^0.8.9;
 
+enum Audience {
+    students, // 0
+    employees, // 1
+    all  // 2
+}
+
 contract VotingFactory {
     address public owner;
     address[] public deployedVotings;
@@ -21,10 +27,13 @@ contract VotingFactory {
         _;
     }
 
-    function createVoting(string memory topic, string[] memory options) public {
+    function createVoting(string memory topic, string[] memory options, Audience audience) public {
         require(keccak256(abi.encodePacked(topic)) != keccak256(abi.encodePacked("")), "Topic must be provided"); // check if topic is not empty
         require(options.length > 1, "At least two options must be provided"); // check if there are at least two options
-        address newVoting = address(new Voting(msg.sender, topic, options));
+        require(options.length <= 10, "No more than 10 options can be provided"); // check if max options is exceeded
+        require(audience >= Audience.students && audience <= Audience.all, "Provided audience does not exist"); // check if provided audience is valid
+
+        address newVoting = address(new Voting(msg.sender, topic, options, audience));
         deployedVotings.push(newVoting);
     }
 
@@ -58,7 +67,6 @@ contract VotingFactory {
 }
 
 contract Voting {
-    
     address public creator;
     string public topic;
     string[] public options;
@@ -66,16 +74,18 @@ contract Voting {
     mapping(address => bool) public voters;
     uint public votersCount;
     bool public closed;
+    Audience public audience;
 
     modifier restricted() {
         require(msg.sender == creator, "Only creator can call this function");
         _;
     }
 
-    constructor (address _creator, string memory _topic, string[] memory _options) {
+    constructor (address _creator, string memory _topic, string[] memory _options, Audience _audience) {
         creator = _creator;
         topic = _topic;
         options = _options;
+        audience = _audience;
     }
 
     function vote(string memory option) public {
@@ -96,18 +106,18 @@ contract Voting {
 
     function closeVoting() public restricted {
         require(!closed, "Voting is already closed");
-
         closed = true;
     }
     
     function getSummary() public view returns (
-      address, string memory, uint, bool
-      ) {
+        address, string memory, uint, bool, string memory
+    ) {
         return (
-          creator,
-          topic,
-          votersCount,
-          closed
+            creator,
+            topic,
+            votersCount,
+            closed,
+            getAudienceToString()
         );
     }
 
@@ -125,5 +135,15 @@ contract Voting {
 
     function getOptionsCount() public view returns (uint) {
         return options.length;
+    }
+
+    function getAudienceToString() public view returns(string memory){
+        if(audience == Audience.students){
+            return "students";
+        } else if(audience == Audience.employees){
+            return "employees";
+        } else {
+            return "all";
+        }
     }
 }
