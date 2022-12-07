@@ -15,8 +15,8 @@ contract VotingFactory {
     mapping(address => bool) public students;
     mapping(address => bool) public employees;
 
-    constructor (address _owner) {
-        owner = _owner;
+    constructor () {
+        owner = msg.sender;
     }
 
     modifier onlyBy(address _account) {
