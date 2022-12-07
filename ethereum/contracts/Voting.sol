@@ -83,6 +83,17 @@ contract Voting {
         _;
     }
 
+    modifier onlyByAudience() {
+        if (audience == Audience.all) {
+            require(factory.isStudent(msg.sender) || factory.isEmployee(msg.sender));
+        } else if (audience == Audience.students) {
+            require(factory.isStudent(msg.sender));
+        } else if (audience == Audience.employees) {
+            require(factory.isEmployee(msg.sender));
+        }
+        _;
+    }
+
     constructor (address _factoryAddress, address _creator, string memory _topic, string[] memory _options, Audience _audience) {
         creator = _creator;
         factoryAddress = _factoryAddress;
