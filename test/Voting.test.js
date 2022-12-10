@@ -18,7 +18,9 @@ beforeEach(async () => {
         .deploy({ data: compiledFactory.evm.bytecode.object })
         .send({ from: accounts[0], gas: "10000000" });
 
-    await factory.methods.createVoting("Some topic", ["Option 1", "Option 2", "Option 3", "Option 4"], 2).send({
+    await factory.methods.addStudent(accounts[1]).send({from: accounts[0]});
+
+    await factory.methods.createVoting("Some topic", ["Option 1", "Option 2", "Option 3", "Option 4"], 0).send({
         from: accounts[0],
         gas: "10000000",
     });
@@ -29,19 +31,19 @@ beforeEach(async () => {
 
 describe("Voting Factory", () => {
     it("add student", async () => {
-        await factory.methods.addStudent(accounts[1]).send({from: accounts[0]});
-        const isStudent = await factory.methods.students(accounts[1]).call();
+        await factory.methods.addStudent(accounts[2]).send({from: accounts[0]});
+        const isStudent = await factory.methods.students(accounts[2]).call();
         assert.equal(isStudent, true);
     })
 
     it("add employee", async () => {
-        await factory.methods.addEmployee(accounts[1]).send({from: accounts[0]});
-        const isEmployee = await factory.methods.employees(accounts[1]).call();
+        await factory.methods.addEmployee(accounts[2]).send({from: accounts[0]});
+        const isEmployee = await factory.methods.employees(accounts[2]).call();
         assert.equal(isEmployee, true);
     })
 
     it("remove student", async () => {
-        var student = accounts[1];
+        var student = accounts[2];
         await factory.methods.addStudent(student).send({from: accounts[0]});
         await factory.methods.removeStudent(student).send({from: accounts[0]});
         const isStudent = await factory.methods.isStudent(student).call();
@@ -49,7 +51,7 @@ describe("Voting Factory", () => {
     })
 
     it("remove employee", async () => {
-        var employee = accounts[1];
+        var employee = accounts[2];
         await factory.methods.addEmployee(employee).send({from: accounts[0]});
         await factory.methods.removeEmployee(employee).send({from: accounts[0]});
         const isStudent = await factory.methods.employees(employee).call();
@@ -58,7 +60,7 @@ describe("Voting Factory", () => {
 
     it("restriction", async () => {
         try {
-            await await factory.methods.addStudent(accounts[1]).send({from: accounts[1]});
+            await await factory.methods.addStudent(accounts[2]).send({from: accounts[1]});
             assert.fail("The transaction should have thrown an error");
         } catch(err) {
             assert.equal(err.message, "VM Exception while processing transaction: revert Sender not authorized.");
@@ -97,4 +99,13 @@ describe("Votings", () => {
 
         assert(isClosed);
     });
+
+    it("onlyByAudience restriction", async () => {
+        try {
+            await await voting.methods.getOptions().send({from: accounts[2]});
+            assert.fail("The transaction should have thrown an error");
+        } catch(err) {
+            assert.equal(err.message, "VM Exception while processing transaction: revert Only students can call this function");
+        }
+    })
 });
