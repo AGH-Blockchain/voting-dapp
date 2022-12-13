@@ -3,6 +3,7 @@ import { Card, Button } from "semantic-ui-react";
 import factory from "../ethereum/votingFactory";
 import Layout from "../components/Layout";
 import { Link } from "../routes";
+import Voting from "../ethereum/voting";
 
 class VotingIndex extends Component {
   static async getInitialProps() {
@@ -12,6 +13,11 @@ class VotingIndex extends Component {
   }
   renderVotings() {
     const items = this.props.votings.map((address) => {
+      let voting = Voting(address);
+      voting.methods.getSummary().call().then((summary) => {
+        console.log(summary[1]);
+      });
+
       return {
         header: address,
         description: (
