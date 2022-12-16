@@ -27,6 +27,7 @@ class VotingDetails extends Component {
       topic: summary[1],
       votersCount: summary[2],
       closed: summary[3],
+      audience: summary[4],
       options: options,
       votes: votes,
     };
@@ -47,6 +48,7 @@ class VotingDetails extends Component {
   renderCards() {
     const {
       creator,
+      audience,
       topic,
       votersCount,
       closed
@@ -58,6 +60,13 @@ class VotingDetails extends Component {
         meta: "Address of Creator",
         description:
           "The person who created this voting and can close it",
+        style: { overflowWrap: "break-word" },
+      },
+      {
+        header: audience,
+        meta: "Audience",
+        description:
+          "People who can cast a vote in this voting",
         style: { overflowWrap: "break-word" },
       },
       {

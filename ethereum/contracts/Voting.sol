@@ -2,6 +2,15 @@
 
 pragma solidity ^0.8.9;
 
+
+/*
+ Voting audience enum
+ Reminder: Enums are interpreted as uint8 in method parameters.
+ Example of use:  Set `employees` as allowed voters:
+ `Audience public audience = 1;` or
+ `Audience public audience = Audience.employees;`
+*/
+
 enum Audience {
     students, // 0
     employees, // 1
@@ -11,7 +20,6 @@ enum Audience {
 contract VotingFactory {
     address public owner;
     address[] public deployedVotings;
-
     mapping(address => bool) public students;
     mapping(address => bool) public employees;
 
@@ -32,7 +40,6 @@ contract VotingFactory {
         require(options.length > 1, "At least two options must be provided"); // check if there are at least two options
         require(options.length <= 10, "No more than 10 options can be provided"); // check if max options is exceeded
         require(audience >= Audience.students && audience <= Audience.all, "Provided audience does not exist"); // check if provided audience is valid
-
         address newVoting = address(new Voting(address(this), msg.sender, topic, options, audience));
         deployedVotings.push(newVoting);
     }
@@ -123,7 +130,7 @@ contract Voting {
         require(!closed, "Voting is already closed");
         closed = true;
     }
-    
+
     function getSummary() public view returns (
         address, string memory, uint, bool, string memory
     ) {
@@ -143,7 +150,7 @@ contract Voting {
     function getOptionVotes(string memory option) public view returns (uint) {
         return optionsVotes[option];
     }
-    
+
     function getVotersCount() public view returns (uint) {
         return votersCount;
     }
