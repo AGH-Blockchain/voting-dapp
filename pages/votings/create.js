@@ -153,7 +153,7 @@ class VotingCreate extends Component {
             content="Add option"
             secondary
           />
-          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
           <Button onClick={() => {
             let fieldsDiv = document.querySelector('.field');
             this.removeOptionField(fieldsDiv);
