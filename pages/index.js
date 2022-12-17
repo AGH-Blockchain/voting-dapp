@@ -6,20 +6,41 @@ import { Link } from "../routes";
 import Voting from "../ethereum/voting";
 
 class VotingIndex extends Component {
+
   static async getInitialProps() {
     const votings = await factory.methods.getDeployedVotings().call();
-
-    return { votings };
+    return {votings};
   }
-  renderVotings() {
-    const items = this.props.votings.map((address) => {
-      let voting = Voting(address);
-      voting.methods.getSummary().call().then((summary) => {
-        console.log(summary[1]);
-      });
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      topics: [] 
+    };
+  }
+
+  componentDidMount() {
+    this.fetchTopics();
+  }
+  
+  async fetchTopics() {
+    const votings = await factory.methods.getDeployedVotings().call();
+    const newTopics = [];
+    for (let i = 0; i < votings.length; i++) {
+      const voting = Voting(votings[i]);
+      let topic = await voting.methods.getSummary().call();
+      newTopics.push(topic[1]);
+    }
+    //console.log(newTopics)    // test how the newTopics array looks like
+    this.setState({ topics: newTopics });
+  }
+
+
+  renderVotings() {
+    const items = this.props.votings.map((address,index) => {
+      console.log(this.state.topics[index]);
       return {
-        header: address,
+        header: this.state.topics[index],  //  print the topic of the voting
         description: (
           <Link route={`/votings/${address}`}>
             <a>View Voting</a>
@@ -28,6 +49,7 @@ class VotingIndex extends Component {
         fluid: true,
       };
     });
+    
     return <Card.Group items={items} />;
   }
   render() {
