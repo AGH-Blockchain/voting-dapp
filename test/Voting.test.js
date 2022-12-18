@@ -11,14 +11,14 @@ let factory;
 let votingAddress;
 
 async function createTestVoting(factory, topic, options, uintAudience){
-  await factory.methods.createVoting(topic, options, uintAudience).send({
-    from: accounts[0],
-    gas: "10000000",
-  });
+    await factory.methods.createVoting(topic, options, uintAudience).send({
+        from: accounts[0],
+        gas: "10000000",
+    });
 
-  [votingAddress] = await factory.methods.getDeployedVotings().call();
-  // return voting
-  return new web3.eth.Contract(compiledVoting.abi, votingAddress);
+    [votingAddress] = await factory.methods.getDeployedVotings().call();
+    // return voting
+    return new web3.eth.Contract(compiledVoting.abi, votingAddress);
 }
 
 beforeEach(async () => {
@@ -29,14 +29,7 @@ beforeEach(async () => {
         .send({ from: accounts[0], gas: "10000000" });
 
     await factory.methods.addStudent(accounts[1]).send({from: accounts[0]});
-
-    await factory.methods.createVoting("Some topic", ["Option 1", "Option 2", "Option 3", "Option 4"], 0).send({
-        from: accounts[0],
-        gas: "10000000",
-    });
-
-    [votingAddress] = await factory.methods.getDeployedVotings().call();
-    voting = await new web3.eth.Contract(compiledVoting.abi, votingAddress);
+    await factory.methods.addEmployee(accounts[2]).send({from: accounts[0]});
 });
 
 describe("Voting Factory", () => {
@@ -94,10 +87,10 @@ describe("Votings", () => {
     it("allows people to vote and marks them as voters", async () => {
         const voting = await createTestVoting(factory,"Some topic", ["Option 1", "Option 2", "Option 3", "Option 4"], 1);
         await voting.methods.vote("Option 1").send({
-            from: accounts[1],
+            from: accounts[2],
             gas: "10000000"
         });
-        const isVoter = await voting.methods.voters(accounts[1]).call();
+        const isVoter = await voting.methods.voters(accounts[2]).call();
         assert(isVoter);
     });
 
@@ -109,23 +102,14 @@ describe("Votings", () => {
                 from: accounts[0],
                 gas: "10000000"
             });
-        const isVoter = await voting.methods.voters(accounts[1]).call();
-        assert(isVoter);
-    });
-
-    it("allows creator to close voting", async () => {
-        await voting.methods
-        .closeVoting()
-        .send({
-            from: accounts[0],
-            gas: "10000000"
-        });
         const isClosed = await voting.methods.closed().call();
 
         assert(isClosed);
     });
 
     it("onlyByAudience restriction", async () => {
+        const voting = await createTestVoting(factory,"Some topic", ["Option 1", "Option 2", "Option 3", "Option 4"], 0);
+
         try {
             await await voting.methods.getOptions().send({from: accounts[2]});
             assert.fail("The transaction should have thrown an error");
@@ -145,9 +129,12 @@ describe("Votings", () => {
     });
 
     it("sets voting audience as employees", async () => {
-        const voting = await createTestVoting(factory,"Some topic", ["Option 1", "Option 2", "Option 3", "Option 4"], 1);
+        const voting = await createTestVoting(factory, "Some topic", ["Option 1", "Option 2", "Option 3", "Option 4"], 1);
 
         const audience = await voting.methods.audience().call();
+
+        console.log(audience);
+
         const audienceToString = await voting.methods.getAudienceToString().call();
 
         assert.equal(audience, 1);
@@ -165,9 +152,12 @@ describe("Votings", () => {
     });
 
     it("allows to create 10 options", async () => {
-        const voting = await createTestVoting(factory,"Some topic", ['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5', 'Option 6', 'Option 7', 'Option 8', 'Option 9', 'Option 10'], 2);
+        const voting = await createTestVoting(
+            factory, "Some topic", ['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5', 'Option 6', 'Option 7', 'Option 8', 'Option 9', 'Option 10'], 2);
 
-        const options = await voting.methods.getOptions().call();
+        const options = await voting.methods.getOptions().call({
+            from: accounts[1]
+        });
         assert.equal(options.length, 10);
     });
 
