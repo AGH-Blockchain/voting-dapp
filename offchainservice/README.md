@@ -8,8 +8,8 @@
 
 ### Configuration
 You need to configure your contract attributes in application.properties:
-- contract address: `voting_factory.service_url`
-- blockchain url: `voting_factory.contract_address`
+- contract address: `voting_factory.contract_address`
+- blockchain url: `voting_factory.service_url`
 - private key: `voting_factory.private_key`
 
 ### Run
