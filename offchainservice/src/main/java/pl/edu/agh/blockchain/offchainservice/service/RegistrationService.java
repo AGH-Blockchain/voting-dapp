@@ -64,9 +64,9 @@ public class RegistrationService {
             if (!correctToken(registerInformationDTO, pendingVerification)) {
                 throw new InvalidVerificationToken("Token is not correct. Check your mail once again or wait about 20 minutes and generate new token");
             }
+            votingFactoryService.addAddress(registerInformationDTO.getEmail(), registerInformationDTO.getBlockchainAddress());
             saveUser(registerInformationDTO.getEmail());
             removeFromPending(registerInformationDTO.getEmail());
-            votingFactoryService.addAddress(registerInformationDTO.getEmail(), registerInformationDTO.getBlockchainAddress());
         } else {
             throw new VerificationTimeException("You have not verified or your token expired");
         }

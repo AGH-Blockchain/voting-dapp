@@ -8,8 +8,11 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jService;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.ContractGasProvider;
-import org.web3j.tx.gas.DefaultGasProvider;
+import org.web3j.tx.gas.StaticGasProvider;
 import pl.edu.agh.blockchain.offchainservice.contracts.VotingFactory;
+import pl.edu.agh.blockchain.offchainservice.exceptions.AddBlockchainAddressException;
+
+import java.math.BigInteger;
 
 
 @Service
@@ -29,17 +32,20 @@ public class VotingFactoryService {
         Web3jService service = new HttpService(serviceUrl);
         this.web3j = Web3j.build(service);
         this.credentials = Credentials.create(privateKey);
-        this.gasProvider = new DefaultGasProvider();
+        this.gasProvider = new StaticGasProvider(BigInteger.valueOf(20000000000L), BigInteger.valueOf(6721975));
     }
 
     public void addAddress(String email, String blockchainAddress) {
 
         VotingFactory contract = VotingFactory.load(contractAddress, web3j, credentials, gasProvider);
-
-        if (email.endsWith("@student.agh.edu.pl")) {
-            contract.addStudent(blockchainAddress);
-        } else {
-            contract.addEmployee(blockchainAddress);
+        try {
+            if (email.endsWith("@student.agh.edu.pl")) {
+                contract.addStudent(blockchainAddress).send();
+            } else {
+                contract.addEmployee(blockchainAddress).send();
+            }
+        } catch (Exception exception) {
+            throw new AddBlockchainAddressException(exception.getMessage());
         }
     }
 }
