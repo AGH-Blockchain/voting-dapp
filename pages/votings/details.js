@@ -114,26 +114,27 @@ class VotingDetails extends Component {
           <Grid.Column width={10}>
             <Grid.Row>
               <h4>Options</h4>
-              { this.renderOptions() }
+              {this.renderOptions()}
             </Grid.Row>
             <Grid.Row marginTop={10}>
-              { !this.props.closed ? 
-                  <VoteForm address={this.props.address} options={this.props.options}/> 
-                  : null }
+              {!this.props.closed ?
+                <VoteForm address={this.props.address} options={this.props.options} />
+                : null}
             </Grid.Row>
             <Grid.Row>
-              { !this.props.closed ?
-                  <Form onSubmit={this.closeVoting} error={!!this.state.errorMessage} >
-                    <Button
-                      content="Close Voting"
-                      icon="cancel"
-                      color="red"
-                      floated="left"
-                      labelPosition="right"
-                      loading={this.state.loading}
-                    />
-                  </Form>
-                : null }
+              {!this.props.closed ?
+                <Form onSubmit={this.closeVoting} error={!!this.state.errorMessage} >
+                  <br />
+                  <Button
+                    content="Close Voting"
+                    icon="cancel"
+                    color="red"
+                    floated="left"
+                    labelPosition="right"
+                    loading={this.state.loading}
+                  />
+                </Form>
+                : null}
             </Grid.Row>
           </Grid.Column>
           <Grid.Column width={6}>

@@ -12,6 +12,7 @@ class VotingIndex extends Component {
   }
   renderVotings() {
     const items = this.props.votings.map((address) => {
+
       return {
         header: address,
         description: (
