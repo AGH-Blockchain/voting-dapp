@@ -12,6 +12,12 @@ const Header = () => {
         <Link route="/">
           <a className="item">Votings</a>
         </Link>
+        <Link route="/registration/verify">
+          <a className="item">Verify</a>
+        </Link>
+        <Link route="/registration/register">
+          <a className="item">Register</a>
+        </Link>
       </Menu.Menu>
     </Menu>
   );
