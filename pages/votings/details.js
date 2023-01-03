@@ -5,6 +5,11 @@ import Voting from "../../ethereum/voting";
 import web3 from "../../ethereum/web3";
 import VoteForm from "../../components/VoteForm";
 
+import * as d3 from 'd3';
+
+import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
+
 class VotingDetails extends Component {
   state = {
     errorMessage: "",
@@ -44,6 +49,23 @@ class VotingDetails extends Component {
     }
     return <Card.Group items={items} />;
   }
+
+  // simple bar chart with data 
+  data = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+      {
+        label: 'My First dataset',
+        backgroundColor: 'rgba(255,99,132,0.2)',
+        borderColor: 'rgba(255,99,132,1)',
+        borderWidth: 1,
+        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+        hoverBorderColor: 'rgba(255,99,132,1)',
+        data: [65, 59, 80, 81, 56, 55, 40]
+      }
+    ]
+  };
+  
 
   renderCards() {
     const {
@@ -86,6 +108,7 @@ class VotingDetails extends Component {
 
     return <Card.Group items={items} />;
   }
+
 
   closeVoting = async (event) => {
     event.preventDefault();
@@ -139,6 +162,13 @@ class VotingDetails extends Component {
           <Grid.Column width={6}>
             <h3>Voting details</h3>
             {this.renderCards()}
+
+            {/* Bar chart */}
+            <Bar
+                data={this.data}
+                width={100}
+                height={50}
+                options={{  maintainAspectRatio: false   }} />
           </Grid.Column>
         </Grid>
       </Layout>
