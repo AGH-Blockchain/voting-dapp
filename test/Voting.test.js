@@ -28,6 +28,7 @@ beforeEach(async () => {
         .deploy({ data: compiledFactory.evm.bytecode.object })
         .send({ from: accounts[0], gas: "10000000" });
 
+    await factory.methods.addStudent(accounts[0]).send({from: accounts[0]});
     await factory.methods.addStudent(accounts[1]).send({from: accounts[0]});
     await factory.methods.addEmployee(accounts[2]).send({from: accounts[0]});
 });
@@ -111,7 +112,7 @@ describe("Votings", () => {
         const voting = await createTestVoting(factory,"Some topic", ["Option 1", "Option 2", "Option 3", "Option 4"], 0);
 
         try {
-            await await voting.methods.getOptions().send({from: accounts[2]});
+            await await voting.methods.vote("Option 1").send({from: accounts[2]});
             assert.fail("The transaction should have thrown an error");
         } catch(err) {
             assert.equal(err.message, "VM Exception while processing transaction: revert Only students can call this function");

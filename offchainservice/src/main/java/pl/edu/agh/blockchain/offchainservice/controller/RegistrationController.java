@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.blockchain.offchainservice.dto.RegisterInformationDTO;
 import pl.edu.agh.blockchain.offchainservice.service.RegistrationService;
 
+@CrossOrigin("http://localhost:3000")
 @RestController
 public class RegistrationController {
 

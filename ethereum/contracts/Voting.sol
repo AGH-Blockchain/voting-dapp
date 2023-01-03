@@ -35,7 +35,12 @@ contract VotingFactory {
         _;
     }
 
-    function createVoting(string memory topic, string[] memory options, Audience audience) public {
+    modifier communityRestricted() {
+        require(students[msg.sender] == true || employees[msg.sender] == true, "Only students and employees can call this function");
+        _;
+    }
+
+    function createVoting(string memory topic, string[] memory options, Audience audience) public communityRestricted() {
         require(keccak256(abi.encodePacked(topic)) != keccak256(abi.encodePacked("")), "Topic must be provided"); // check if topic is not empty
         require(options.length > 1, "At least two options must be provided"); // check if there are at least two options
         require(options.length <= 10, "No more than 10 options can be provided"); // check if max options is exceeded
@@ -143,7 +148,7 @@ contract Voting {
         );
     }
 
-    function getOptions() public onlyByAudience() view returns (string[] memory) {
+    function getOptions() public view returns (string[] memory) {
         return options;
     }
 
@@ -155,7 +160,7 @@ contract Voting {
         return votersCount;
     }
 
-    function getOptionsCount() public onlyByAudience() view returns (uint) {
+    function getOptionsCount() public view returns (uint) {
         return options.length;
     }
 
