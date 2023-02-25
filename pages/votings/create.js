@@ -21,6 +21,12 @@ class VotingCreate extends Component {
     loading: false,
   };
 
+  async componentDidMount() {
+    const accounts = await web3.eth.getAccounts();
+    this.isStudent = await factory.methods.isStudent(accounts[0]).call();
+    this.isEmployee = await factory.methods.isEmployee(accounts[0]).call();
+  }
+
   onSubmit = async (event) => {
     event.preventDefault();
     this.setState({ loading: true, errorMessage: "" });
@@ -109,8 +115,8 @@ class VotingCreate extends Component {
             <select onChange={(event) => {
               this.setState({audience: event.target.value});
             }}>
-              <option value="0">Students</option>
-              <option value="1">Employees</option>
+              {this.isStudent && <option value="0">Students</option>}
+              {this.isEmployee && <option value="1">Employees</option>}
               <option value="2">All</option>
           </select>
             {/*// define options*/}
