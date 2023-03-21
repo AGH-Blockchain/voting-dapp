@@ -13,24 +13,36 @@ class VotingDetails extends Component {
 
   static async getInitialProps(props) {
     const voting = Voting(props.query.address);
-
     const summary = await voting.methods.getSummary().call();
-    const options = await voting.methods.getOptions().call();
-    let votes = [];
-    for (let i = 0; i < options.length; i++) {
-      votes.push(await voting.methods.getOptionVotes(options[i]).call());
-    }
-
-    return {
-      address: props.query.address,
-      creator: summary[0],
-      topic: summary[1],
-      votersCount: summary[2],
-      closed: summary[3],
-      audience: summary[4],
-      options: options,
-      votes: votes,
+    var errorMessage = "";
+    try {
+        const options = await voting.methods.getOptions().call();
+        let votes = [];
+        for (let i = 0; i < options.length; i++) {
+            votes.push(await voting.methods.getOptionVotes(options[i]).call());
+        }
+    } catch (err) {
+        const regex = /"reason": "([^"]*)"/;
+        const str = err.message.match(regex)[0].split(":")[1];
+        const start = str.indexOf('"') + 1;
+        const end = str.lastIndexOf('"');
+        const result = str.substring(start, end);
+        errorMessage = result;
     };
+
+    return (
+        errorMessage.length == 0 ? {
+        address: props.query.address,
+        creator: summary[0],
+        topic: summary[1],
+        votersCount: summary[2],
+        closed: summary[3],
+        audience: summary[4],
+        options: options,
+        votes: votes
+    } : {
+        errorMessage: errorMessage
+    });
   }
 
   renderOptions() {
@@ -91,7 +103,6 @@ class VotingDetails extends Component {
     event.preventDefault();
 
     const voting = Voting(this.props.address);
-
     this.setState({ loading: true, errorMessage: "" });
 
     try {
@@ -108,7 +119,8 @@ class VotingDetails extends Component {
 
   render() {
     return (
-      <Layout>
+      this.state.errorMessage.length != 0 ? (
+        <Layout>
         <h3>{this.props.topic}</h3>
         <Grid>
           <Grid.Column width={10}>
@@ -142,6 +154,11 @@ class VotingDetails extends Component {
           </Grid.Column>
         </Grid>
       </Layout>
+      ) : (
+        <Layout>
+            <p>ERROR: {this.props.errorMessage}</p>
+        </Layout>
+      )
     );
   }
 }
