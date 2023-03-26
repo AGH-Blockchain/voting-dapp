@@ -14,10 +14,12 @@ class VotingDetails extends Component {
   static async getInitialProps(props) {
     const voting = Voting(props.query.address);
     const summary = await voting.methods.getSummary().call();
+    let options = [];
+    let votes = [];
     var errorMessage = "";
+    
     try {
-        const options = await voting.methods.getOptions().call();
-        let votes = [];
+        options = await voting.methods.getOptions().call();
         for (let i = 0; i < options.length; i++) {
             votes.push(await voting.methods.getOptionVotes(options[i]).call());
         }
@@ -119,7 +121,7 @@ class VotingDetails extends Component {
 
   render() {
     return (
-      this.state.errorMessage.length != 0 ? (
+        this.props.options ? (
         <Layout>
         <h3>{this.props.topic}</h3>
         <Grid>
