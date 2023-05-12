@@ -51,7 +51,7 @@ class VotingCreate extends Component {
 
   createOptionField = (formDiv) => {
     const optionCount = formDiv.querySelectorAll('input').length;
-    if(optionCount > 10){
+    if (optionCount > 10) {
       window.alert('You cannot create more than 10 options per voting.');
       return;
     }
@@ -67,13 +67,13 @@ class VotingCreate extends Component {
     // add slot for the option in state
     const optionsCopy = this.state.options.slice();
     optionsCopy.push("")
-    this.setState({options: optionsCopy});
+    this.setState({ options: optionsCopy });
     // update options array on change
     inputField.addEventListener('change', (event) => {
       // create copy of options
       const optionsCopy = this.state.options.slice();
-      optionsCopy[optionCount-1] = event.target.value;
-      this.setState({options: optionsCopy});
+      optionsCopy[optionCount - 1] = event.target.value;
+      this.setState({ options: optionsCopy });
     })
 
     inputDiv.appendChild(inputField);
@@ -85,20 +85,20 @@ class VotingCreate extends Component {
   removeOptionField = (formDiv) => {
     const labels = formDiv.querySelectorAll('label');
     const options = formDiv.querySelectorAll('.ui .input');
-    const  inputOptionsInputs = Array.from(options);
+    const inputOptionsInputs = Array.from(options);
 
     // remove topic input field from list
     inputOptionsInputs.shift();
-    if(inputOptionsInputs.length  <= 2){
+    if (inputOptionsInputs.length <= 2) {
       window.alert("At least two options must be provided");
       return;
     }
 
     // remove option from state
-    this.setState({ options: this.state.options.slice(0, -1)});
+    this.setState({ options: this.state.options.slice(0, -1) });
     // remove last option label and input field
-    labels[labels.length-1].remove();
-    options[options.length-1].remove();
+    labels[labels.length - 1].remove();
+    options[options.length - 1].remove();
   }
 
   render() {
@@ -116,12 +116,12 @@ class VotingCreate extends Component {
             />
             <label>Audience</label>
             <select onChange={(event) => {
-              this.setState({audience: event.target.value});
+              this.setState({ audience: event.target.value });
             }}>
               {this.props.isStudent && <option value="0">Students</option>}
               {this.props.isEmployee && <option value="1">Employees</option>}
               <option value="2">All</option>
-          </select>
+            </select>
             {/*// define options*/}
             <label>Option 1</label>
             <Input
@@ -129,8 +129,8 @@ class VotingCreate extends Component {
               onChange={(event) => {
                 const optionsCopy = this.state.options.slice();
                 optionsCopy[0] = event.target.value;
-                this.setState({options: optionsCopy});
-                }
+                this.setState({ options: optionsCopy });
+              }
               }
             />
             <label>Option 2</label>
@@ -139,36 +139,41 @@ class VotingCreate extends Component {
               onChange={(event) => {
                 let optionsCopy = this.state.options.slice();
                 optionsCopy[1] = event.target.value;
-                this.setState({options: optionsCopy});
+                this.setState({ options: optionsCopy });
               }
-            }
+              }
             />
           </Form.Field>
           <Message error header="Oops!" content={this.state.errorMessage} />
-          
+
           <Button loading={this.state.loading} primary>
             Create!
           </Button>
         </Form>
-        <Button onClick={() => {
-          let fieldsDiv = document.querySelector('.field');
-          this.createOptionField(fieldsDiv);
-        }}
-          variant="outlined"
-          icon="add"
-          content="Add option"
-          secondary
-        />
-        <Button onClick={() => {
-          let fieldsDiv = document.querySelector('.field');
-          this.removeOptionField(fieldsDiv);
-        }}
-          variant="outlined"
-          icon="minus"
-          content="Remove option"
-          secondary
-        />
+        <br />
 
+        <div className='field'>
+          <Button onClick={() => {
+            let fieldsDiv = document.querySelector('.field');
+            this.createOptionField(fieldsDiv);
+          }}
+            variant="outlined"
+            icon="add"
+            content="Add option"
+            secondary
+          />
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <Button onClick={() => {
+            let fieldsDiv = document.querySelector('.field');
+            this.removeOptionField(fieldsDiv);
+          }}
+            variant="outlined"
+            icon="minus"
+            content="Remove option"
+            secondary
+          />
+
+        </div>
       </Layout>
     );
   }
